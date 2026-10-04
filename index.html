@@ -2,7 +2,7 @@
 <html lang="es-AR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Pasapalabra Bio — rosco de biología</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -479,8 +479,8 @@ body.con-letras .letras-fondo{display:block}
     <div style="margin-top:20px">
       <label>Tiempo de juego</label>
       <div class="chips" id="chips-tiempo">
-        <button class="chip" type="button" data-seg="300" aria-pressed="true">5 minutos</button>
-        <button class="chip" type="button" data-seg="480" aria-pressed="false">8 minutos</button>
+        <button class="chip" type="button" data-seg="600" aria-pressed="true">10 minutos</button>
+        <button class="chip" type="button" data-seg="900" aria-pressed="false">15 minutos</button>
       </div>
     </div>
     <div style="margin-top:18px">
@@ -815,7 +815,7 @@ const AVATAR_BOTI=AVATARES.length-1;
 const ava=j=>'<img class="ava-p" src="'+AVATARES[avatares[j]].img+'" alt="">';
 const avaR=i=>{const a=AVATARES[+i];return a?'<img class="ava-r" src="'+a.img+'" alt="">':'<span></span>';};
 const avaO=j=>'<img class="ava-o" src="'+AVATARES[avatares[j]].img+'" alt="">';
-let seg=300,restante=300,sinReloj=false,cron=null,jugando=false,bloqueado=false,arranque=true;
+let seg=600,restante=600,sinReloj=false,cron=null,jugando=false,bloqueado=false,arranque=true;
 let sonido=true,recuperacion=false,pendientesRepaso=[],conBot=false,sola=true,intentos=0,timers=[];
 const modoPractica=()=>sinReloj||recuperacion;
 const esBot=()=>conBot&&turno===1;
@@ -1069,9 +1069,16 @@ progresoPintar();
 const fmt=s=>String(Math.floor(Math.max(s,0)/60)).padStart(2,"0")+":"+String(Math.max(s,0)%60).padStart(2,"0");
 
 /* ===== INICIO ===== */
+/* tiempos según modalidad: sola necesita más porque cada consigna se lee en voz alta */
+function pintarTiempo(){
+  const ops=sola?[[600,"10 minutos"],[900,"15 minutos"]]:[[300,"5 minutos"],[480,"8 minutos"]];
+  $("chips-tiempo").innerHTML=ops.map((o,i)=>'<button class="chip" type="button" data-seg="'+o[0]+'" aria-pressed="'+(i===0)+'">'+o[1]+'</button>').join("");
+  sinReloj=false;seg=ops[0][0];
+}
 $("chips-rival").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;
   [...$("chips-rival").children].forEach(c=>c.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
   sola=b.dataset.bot==="2";conBot=b.dataset.bot==="1";
+  pintarTiempo();
   $("lab2").textContent=conBot?"Rival":"Jugador 2";
   $("n2").value=conBot?BOT.nombre:"";$("n2").disabled=conBot;
   if(conBot)avatares[1]=AVATAR_BOTI;
