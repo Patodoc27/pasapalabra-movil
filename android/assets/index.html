@@ -917,7 +917,7 @@ pintarVoz();
 function leerConsigna(){
   if(!jugando)return;
   const it=items[idx];if(!it)return;
-  const NOMBRE_LETRA={A:"a",B:"be",C:"ce",D:"de",E:"e",F:"efe",G:"ge",H:"hache",I:"i",J:"jota",L:"ele",M:"eme",N:"ene","Ñ":"eñe",O:"o",P:"pe",Q:"cu",R:"ere",S:"ese",T:"te",U:"u",V:"uve",X:"equis",Y:"i griega"};
+  const NOMBRE_LETRA={A:"a",B:"be",C:"ce",D:"de",E:"e",F:"efe",G:"ge",H:"hache",I:"i",J:"jota",K:"ka",L:"ele",M:"eme",N:"ene","Ñ":"eñe",O:"o",P:"pe",Q:"cu",R:"ere",S:"ese",T:"te",U:"u",V:"be corta",W:"doble u",X:"equis",Y:"i griega",Z:"zeta"};
   const cons=(it.m===E?"Empieza por la letra ":"Contiene la letra ")+(NOMBRE_LETRA[it.letra]||it.letra);
   const txt=(it.d||"").replace(/<[^>]+>/g," ");
   if(!lectura||!soportaVoz)return;
@@ -1035,6 +1035,7 @@ function progresoGuardar(){
     g.partidas=(g.partidas||0)+1;
     g.aciertos=(g.aciertos||0)+puntos[0];
     g.mejor=Math.max(g.mejor||0,puntos[0]);
+    if(!quedan())g.completos=(g.completos||0)+1;   // rosco cerrado: no quedó letra pendiente
     const map={};(g.repasar||[]).forEach(it=>map[it.p]=it);
     items.forEach((it,i)=>{
       if(estado[i]==="acierto")delete map[it.p];                       // ya la recuperó: sale del repaso
@@ -1052,12 +1053,10 @@ function progresoPintar(){
   card.style.display="";
   const rep=(g.repasar||[]).length;
   $("progreso-detalle").innerHTML=
-    "<b>"+g.partidas+"</b> "+(g.partidas===1?"ronda jugada":"rondas jugadas")+" · <b>"+(g.aciertos||0)+"</b> aciertos acumulados"+
-    " · mejor rosco: <b>"+(g.mejor||0)+"</b>"+
-    (rep?" · <b>"+rep+"</b> "+(rep===1?"concepto pendiente":"conceptos pendientes")+" de repaso":" · nada pendiente de repaso");
+    "Roscos completos: <b>"+(g.completos||0)+"</b><br>Conceptos acertados: <b>"+(g.aciertos||0)+"</b>";
   const b=$("btn-repaso");
   b.style.display=rep?"":"none";
-  if(rep)b.textContent="↻ Repasar "+(rep===1?"el concepto pendiente":"los "+rep+" conceptos pendientes");
+  if(rep)b.textContent="↻ Repasar las que te costaron";
 }
 $("btn-repaso").addEventListener("click",()=>{
   const g=progresoLeer();
