@@ -433,7 +433,7 @@ body.con-letras .letras-fondo{display:block}
     </div>
 
     <div class="col-a">
-    <details open>
+    <details>
       <summary>Reglas del juego</summary>
       <ul>
         <li>En modo <b>Sola</b> respondés todo el rosco vos, una letra atrás de la otra: ganás si cerrás las 25. En modo <b>Contra Boti</b> el turno alterna, incluso cuando se dice Pasapalabra.</li>
@@ -480,6 +480,7 @@ body.con-letras .letras-fondo{display:block}
       <label>Tiempo de juego</label>
       <div class="chips" id="chips-tiempo">
         <button class="chip" type="button" data-seg="600" aria-pressed="true">10 minutos</button>
+        <button class="chip" type="button" data-seg="720" aria-pressed="false">12 minutos</button>
         <button class="chip" type="button" data-seg="900" aria-pressed="false">15 minutos</button>
       </div>
     </div>
@@ -789,7 +790,7 @@ const ROSCOS=[];for(let i=0;i<20;i++)ROSCOS.push(armarRoscoN());
    En cada partida se sortea la acertividad de Boti: 95 %, 85 %, 80 % o 75 %,
    sin avisar cuál tocó. Pasa el 12 % y nunca acierta más de tres seguidas. */
 const BOT={ok:0.80,pasa:0.12,racha:3,nombre:"Boti"};
-const ACIERTE_BOT=[0.95,0.85,0.80,0.75];
+const ACIERTE_BOT=[0.80,0.85,0.90,0.95,1.00];   // asertividad de Boti: se sortea en cada partida
 let rachaBot=0,rachas=[0,0];
 
 /* ===== ESTADO ===== */
@@ -924,7 +925,7 @@ function leerConsigna(){
   if(!vozElegida)elegirVoz();
   callar();
   if(!esBot()){$("feedback").className="feedback";$("feedback").innerHTML="<span class='tit'>🗣️ Escuchá la consigna</span>Cuando termine de leer se habilita la respuesta.";}
-  /* primero la consigna; cuando termina, ~2 s de pausa y recién la definición;
+  /* primero la consigna; cuando termina, ~1.2 s de pausa y recién la definición;
      al terminar la definición se habilita el campo de respuesta */
   setTimeout(()=>decir(cons,()=>{
     setTimeout(()=>{
@@ -935,7 +936,7 @@ function leerConsigna(){
           $("feedback").className="feedback";$("feedback").textContent="";
           luego(()=>$("entrada").focus(),60);
         }});
-    },2000);
+    },1200);
   }),90);
 }
 
@@ -1070,7 +1071,7 @@ const fmt=s=>String(Math.floor(Math.max(s,0)/60)).padStart(2,"0")+":"+String(Mat
 /* ===== INICIO ===== */
 /* tiempos según modalidad: sola necesita más porque cada consigna se lee en voz alta */
 function pintarTiempo(){
-  const ops=sola?[[600,"10 minutos"],[900,"15 minutos"]]:[[300,"5 minutos"],[480,"8 minutos"]];
+  const ops=sola?[[600,"10 minutos"],[720,"12 minutos"],[900,"15 minutos"]]:[[300,"5 minutos"],[480,"8 minutos"]];
   $("chips-tiempo").innerHTML=ops.map((o,i)=>'<button class="chip" type="button" data-seg="'+o[0]+'" aria-pressed="'+(i===0)+'">'+o[1]+'</button>').join("");
   sinReloj=false;seg=ops[0][0];
 }
